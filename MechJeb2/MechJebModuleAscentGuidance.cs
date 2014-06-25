@@ -65,10 +65,10 @@ namespace MuMech
 
             if (showingGuidance)
             {
-                GUILayout.Label("The purple circle on the navball points along the ascent path.");
-                if (GUILayout.Button("Stop showing navball guidance")) core.target.Unset();
+                GUILayout.Label("Фиолетовый круг - маркер направления");
+                if (GUILayout.Button("Скрыть маркер направления")) core.target.Unset();
             }
-            else if (GUILayout.Button("Show navball ascent path guidance"))
+            else if (GUILayout.Button("Показать маркер направления"))
             {
                 core.target.SetDirectionTarget(TARGET_NAME);
             }
@@ -77,11 +77,11 @@ namespace MuMech
             {
                 if (autopilot.enabled)
                 {
-                    if (GUILayout.Button("Disengage autopilot")) autopilot.users.Remove(this);
+                    if (GUILayout.Button("Выключить автопилот")) autopilot.users.Remove(this);
                 }
                 else
                 {
-                    if (GUILayout.Button("Engage autopilot"))
+                    if (GUILayout.Button("Включить автопилот"))
                     {
                         autopilot.users.Add(this);
                     }
@@ -89,22 +89,22 @@ namespace MuMech
 
                 ascentPath = autopilot.ascentPath;
 
-                GuiUtils.SimpleTextBox("Orbit altitude", autopilot.desiredOrbitAltitude, "km");
+                GuiUtils.SimpleTextBox("Высота орбиты", autopilot.desiredOrbitAltitude, "км");
                 autopilot.desiredInclination = desiredInclination;
             }
 
-            GuiUtils.SimpleTextBox("Orbit inclination", desiredInclination, "º");
+            GuiUtils.SimpleTextBox("Наклон орбиты", desiredInclination, "º");
 
             core.thrust.LimitToPreventOverheatsInfoItem();
             core.thrust.LimitToTerminalVelocityInfoItem();
             core.thrust.LimitAccelerationInfoItem();
             core.thrust.LimitThrottleInfoItem();
-            autopilot.correctiveSteering = GUILayout.Toggle(autopilot.correctiveSteering, "Corrective steering");
+            autopilot.correctiveSteering = GUILayout.Toggle(autopilot.correctiveSteering, "Коррекция курса");
 
-            autopilot.autostage = GUILayout.Toggle(autopilot.autostage, "Autostage");
+            autopilot.autostage = GUILayout.Toggle(autopilot.autostage, "Автостадии");
             if(autopilot.autostage) core.staging.AutostageSettingsInfoItem();
 
-            core.node.autowarp = GUILayout.Toggle(core.node.autowarp, "Auto-warp");
+            core.node.autowarp = GUILayout.Toggle(core.node.autowarp, "Авто-время");
 
             if (autopilot != null && vessel.LandedOrSplashed)
             {
@@ -113,7 +113,7 @@ namespace MuMech
                     if (core.node.autowarp)
                     {
                         GUILayout.BeginHorizontal();
-                        GUILayout.Label("Launch countdown:", GUILayout.ExpandWidth(true));
+                        GUILayout.Label("До старта:", GUILayout.ExpandWidth(true));
                         autopilot.warpCountDown.text = GUILayout.TextField(autopilot.warpCountDown.text, GUILayout.Width(60));
                         GUILayout.Label("s", GUILayout.ExpandWidth(false));
                         GUILayout.EndHorizontal();
@@ -121,7 +121,7 @@ namespace MuMech
                     if (!launchingToPlane && !launchingToRendezvous)
                     {
                         GUILayout.BeginHorizontal();
-                        if (GUILayout.Button("Launch to rendezvous:", GUILayout.ExpandWidth(false)))
+                        if (GUILayout.Button("До рандеву:", GUILayout.ExpandWidth(false)))
                         {
                             launchingToRendezvous = true;
                         }
@@ -129,7 +129,7 @@ namespace MuMech
                         GUILayout.Label("º", GUILayout.ExpandWidth(false));
                         GUILayout.EndHorizontal();
                     }
-                    if (!launchingToPlane && !launchingToRendezvous && GUILayout.Button("Launch into plane of target"))
+                    if (!launchingToPlane && !launchingToRendezvous && GUILayout.Button("Старт в плоскость цели"))
                     {
                         launchingToPlane = true;
                     }
@@ -137,7 +137,7 @@ namespace MuMech
                 else
                 {
                     launchingToPlane = launchingToRendezvous = false;
-                    GUILayout.Label("Select a target for a timed launch.");
+                    GUILayout.Label("Выберите цель для старта");
                 }
 
                 if (launchingToPlane || launchingToRendezvous)
@@ -156,24 +156,24 @@ namespace MuMech
                         desiredInclination *= Math.Sign(Vector3d.Dot(core.target.Orbit.SwappedOrbitNormal(), Vector3d.Cross(vesselState.CoM - mainBody.position, mainBody.transform.up)));
                     }                    
 
-                    GUILayout.Label("Launching to " + (launchingToPlane ? "target plane" : "rendezvous") + ": T-" + MuUtils.ToSI(tMinus, 0) + "s");
+                    GUILayout.Label("Старт " + (launchingToPlane ? "в плоскость цели" : "в рандеву") + ": T-" + MuUtils.ToSI(tMinus, 0) + "s");
                     if (tMinus < 3 * vesselState.deltaT)
                     {
                         if (autopilot.enabled) Staging.ActivateNextStage();
                         launchingToPlane = launchingToRendezvous = false;
                     }
 
-                    if (GUILayout.Button("Abort")) launchingToPlane = launchingToRendezvous = false;
+                    if (GUILayout.Button("Отмена")) launchingToPlane = launchingToRendezvous = false;
                 }
             }
 
             if (autopilot != null && autopilot.enabled)
             {
-                GUILayout.Label("Autopilot status: " + autopilot.status);
+                GUILayout.Label("Статус: " + autopilot.status);
             }
 
             MechJebModuleAscentPathEditor editor = core.GetComputerModule<MechJebModuleAscentPathEditor>();
-            if (editor != null) editor.enabled = GUILayout.Toggle(editor.enabled, "Edit ascent path");
+            if (editor != null) editor.enabled = GUILayout.Toggle(editor.enabled, "Изменение траектории");
 
             GUILayout.EndVertical();
 
